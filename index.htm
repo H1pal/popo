@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D 체스판</title>
+    <link rel="stylesheet" href="style.css">
+    <script type="importmap">
+        {
+            "imports": {
+                "three": "https://unpkg.com/three@0.170.0/build/three.module.js",
+                "three/addons/": "https://unpkg.com/three@0.170.0/examples/jsm/"
+            }
+        }
+    </script>
+</head>
+
+<body>
+    <details class="settings-panel">
+        <summary class="settings-summary" aria-label="설정" title="설정">
+            <svg class="settings-icon" xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+            </svg>
+        </summary>
+        <div class="settings-body">
+            <label class="settings-row">
+                <span class="settings-label">그림자</span>
+                <input type="checkbox" id="set-shadow" checked>
+            </label>
+            <label class="settings-row">
+                <span class="settings-label">화면 선명도</span>
+                <select id="set-dpr" class="settings-select">
+                    <option value="auto" selected>자동 (권장)</option>
+                    <option value="1">1× (가볍게)</option>
+                    <option value="2">최대 2×</option>
+                </select>
+            </label>
+            <div class="settings-row settings-row--full settings-bg-row">
+                <span class="settings-label">배경 색</span>
+                <div class="settings-swatches" role="radiogroup" aria-label="배경 색">
+                    <label class="settings-swatch" title="기본">
+                        <input type="radio" name="set-bg-preset" value="#1a1d24" checked>
+                        <span class="settings-swatch-fill" style="background-color:#1a1d24"></span>
+                    </label>
+                    <label class="settings-swatch" title="슬레이트">
+                        <input type="radio" name="set-bg-preset" value="#121820">
+                        <span class="settings-swatch-fill" style="background-color:#121820"></span>
+                    </label>
+                    <label class="settings-swatch" title="딥 블루">
+                        <input type="radio" name="set-bg-preset" value="#0d1520">
+                        <span class="settings-swatch-fill" style="background-color:#0d1520"></span>
+                    </label>
+                    <label class="settings-swatch" title="웜 브라운">
+                        <input type="radio" name="set-bg-preset" value="#1c1410">
+                        <span class="settings-swatch-fill" style="background-color:#1c1410"></span>
+                    </label>
+                    <label class="settings-swatch" title="포레스트">
+                        <input type="radio" name="set-bg-preset" value="#101812">
+                        <span class="settings-swatch-fill" style="background-color:#101812"></span>
+                    </label>
+                    <label class="settings-swatch" title="차분한 자주">
+                        <input type="radio" name="set-bg-preset" value="#18141c">
+                        <span class="settings-swatch-fill" style="background-color:#18141c"></span>
+                    </label>
+                </div>
+            </div>
+            <label class="settings-row settings-row--full">
+                <span class="settings-label">회전 속도 <span id="set-rotate-val" class="settings-value">100%</span></span>
+                <input type="range" id="set-rotate" min="0.25" max="1.75" step="0.05" value="1">
+            </label>
+            <div class="settings-actions">
+                <button type="button" id="set-autorotate-cycle" class="settings-btn">자동 회전: 꺼짐</button>
+                <button type="button" id="set-reset-cam" class="settings-btn">카메라 초기화</button>
+            </div>
+        </div>
+    </details>
+
+    <main class="board-wrap">
+        <div class="board-frame-inner">
+            <div class="board-3d" role="img" aria-label="3D 체스판. 드래그로 회전, 휠로 확대·축소"></div>
+            <button type="button" class="board-resize-handle" aria-label="액자 크기 조절" title="드래그하여 액자 크기 조절"></button>
+        </div>
+    </main>
+
+    <script type="module" src="script.js"></script>
+</body>
+
+</html>
